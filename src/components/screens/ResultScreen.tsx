@@ -6,7 +6,7 @@ import Confetti from '../confetti/Confetti';
 import { getMedalForScore } from '../../data/gameData';
 import { useIsMobile } from '@/hooks/use-mobile';
 import DazzifyLogo from '../logo/DazzifyLogo';
-import { Trophy, Star, Award } from 'lucide-react';
+import { Trophy, Star, Award, ExternalLink } from 'lucide-react';
 
 interface ResultScreenProps {
   score: number;
@@ -55,6 +55,10 @@ const ResultScreen: React.FC<ResultScreenProps> = ({
         return <Award className="h-12 w-12 text-green-500" />;
     }
   };
+
+  const handleVisitDazzify = () => {
+    window.open('https://www.dazzifyapp.com/', '_blank');
+  };
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary to-primary-dark flex flex-col items-center justify-center p-4 sm:p-6 text-white">
@@ -92,7 +96,7 @@ const ResultScreen: React.FC<ResultScreenProps> = ({
           </p>
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md mb-6">
           <Button 
             onClick={onPlayAgain}
             className="bg-secondary hover:bg-secondary-light text-primary font-bold px-4 sm:px-6 py-3 sm:py-4 rounded-lg flex-1"
@@ -102,19 +106,30 @@ const ResultScreen: React.FC<ResultScreenProps> = ({
           </Button>
           
           <Button 
-            onClick={onDiscoverServices}
+            onClick={handleVisitDazzify}
             variant="outline"
             className="border-white text-white hover:bg-white/20 font-bold px-4 sm:px-6 py-3 sm:py-4 rounded-lg flex-1"
           >
-            <span className="mr-2">📦</span>
-            Discover Services
+            <ExternalLink className="mr-2 h-5 w-5" />
+            Visit Dazzify
           </Button>
         </div>
         
-        <button className="mt-4 sm:mt-6 text-xs sm:text-sm opacity-70 hover:opacity-100 transition-opacity duration-200">
-          <span className="mr-1">💬</span>
-          Send Feedback
-        </button>
+        <div className="text-center px-4 py-4 bg-white/10 rounded-lg w-full max-w-lg">
+          <h3 className="text-lg font-semibold mb-2">About Dazzify</h3>
+          <p className="text-sm opacity-80 mb-4">
+            Dazzify simplifies your service booking needs with its innovative platform.
+            Visit our website to discover all our features!
+          </p>
+          <Button
+            onClick={handleVisitDazzify}
+            className="bg-white text-primary hover:bg-gray-200 font-medium"
+            size="sm"
+          >
+            <ExternalLink className="mr-2 h-4 w-4" />
+            www.dazzifyapp.com
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import DraggableItem from './DraggableItem';
 import DropZone from './DropZone';
@@ -140,21 +139,16 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
   const handleTimeUpContinue = () => {
     setShowTimeUpDialog(false);
     
-    // Calculate if all matches in the current scenario are correct
+    // Calculate score for current scenario
     const allCorrect = matches.every(match => match.isCorrect);
     
-    // Only add to score if all matches are correct
+    // Only add to score if all matches in the scenario are correct
     if (allCorrect) {
       setTotalScore(prev => prev + 1);
     }
     
-    // Move to next scenario or end the game
-    if (currentScenarioIndex < scenarios.length - 1) {
-      setCurrentScenarioIndex(currentScenarioIndex + 1);
-    } else {
-      // Game is complete
-      onGameComplete(totalScore, scenarios.length);
-    }
+    // End the game and go directly to result page
+    onGameComplete(totalScore, scenarios.length);
   };
   
   if (!currentScenario) return null;
@@ -255,7 +249,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
               Time's Up!
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Your time for this scenario has ended. Let's see how you did and move on to the next challenge!
+              Your time for this scenario has ended. Let's see how you did!
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -263,7 +257,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
               onClick={handleTimeUpContinue} 
               className="bg-primary hover:bg-primary-dark"
             >
-              Continue
+              Continue to Results
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

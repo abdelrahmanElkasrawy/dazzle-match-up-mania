@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface GameTimerProps {
   duration: number; // in seconds
@@ -9,6 +9,7 @@ interface GameTimerProps {
 
 const GameTimer: React.FC<GameTimerProps> = ({ duration, onTimeUp, isPlaying }) => {
   const [timeLeft, setTimeLeft] = useState(duration);
+  const timeUpFired = useRef(false);
   
   useEffect(() => {
     if (!isPlaying) return;
@@ -17,19 +18,25 @@ const GameTimer: React.FC<GameTimerProps> = ({ duration, onTimeUp, isPlaying }) 
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          onTimeUp();
+          if (!timeUpFired.current) {
+            timeUpFired.current = true;
+            onTimeUp();
+          }
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
     
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(timer);
+    };
   }, [isPlaying, onTimeUp]);
   
   // Reset timer when duration changes or game restarts
   useEffect(() => {
     setTimeLeft(duration);
+    timeUpFired.current = false;
   }, [duration]);
   
   const formatTime = (seconds: number) => {
