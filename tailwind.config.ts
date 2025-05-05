@@ -28,7 +28,7 @@ export default {
 				primary: {
 					DEFAULT: '#4B108D', // Dazzify primary purple
 					foreground: '#ffffff',
-					light: '#7336b5',
+					light: '#6a36b5',
 					dark: '#350a65',
 				},
 				secondary: {

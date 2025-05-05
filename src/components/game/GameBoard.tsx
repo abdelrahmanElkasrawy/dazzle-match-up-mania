@@ -4,6 +4,7 @@ import DraggableItem from './DraggableItem';
 import DropZone from './DropZone';
 import GameTimer from '../timer/GameTimer';
 import { scenarios, features, getMedalForScore, Feature, Provider } from '../../data/gameData';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface GameBoardProps {
   onGameComplete: (score: number, total: number) => void;
@@ -18,10 +19,12 @@ interface Match {
 const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
   const [score, setScore] = useState(0);
+  const [totalScore, setTotalScore] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [matches, setMatches] = useState<Match[]>([]);
   const [availableFeatures, setAvailableFeatures] = useState<Feature[]>([]);
   const [isPlaying, setIsPlaying] = useState(true);
+  const isMobile = useIsMobile();
   
   const currentScenario = scenarios[currentScenarioIndex];
   
@@ -72,15 +75,21 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
     const providerMatch = matches.find(match => match.providerId === providerId);
     if (!providerMatch) return;
     
-    // If provider already has a correct match, don't allow changes
-    if (providerMatch.isCorrect === true) return;
-    
     // Check if the match is correct
     const isCorrect = currentScenario.correctMatches[providerId] === featureId;
     
     // Update matches
     setMatches(matches.map(match => {
       if (match.providerId === providerId) {
+        // If replacing an existing match, adjust the score
+        if (match.featureId !== null && match.isCorrect === true) {
+          // Replacing a correct match with a new one
+          setScore(prevScore => isCorrect ? prevScore : prevScore - 1);
+        } else if (isCorrect) {
+          // Adding a new correct match
+          setScore(prevScore => prevScore + 1);
+        }
+        
         return {
           ...match,
           featureId,
@@ -90,11 +99,6 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
       return match;
     }));
     
-    // Update score if correct
-    if (isCorrect) {
-      setScore(score + 1);
-    }
-    
     // Check if all providers have matches
     const allMatched = matches.every(match => 
       match.providerId === providerId ? true : match.featureId !== null
@@ -102,19 +106,29 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
     
     // If all providers have matches, check if scenario is complete
     if (allMatched) {
-      setIsComplete(true);
-      setIsPlaying(false);
-      
-      // Add delay before moving to next scenario
-      setTimeout(() => {
-        if (currentScenarioIndex < scenarios.length - 1) {
-          setCurrentScenarioIndex(currentScenarioIndex + 1);
-        } else {
-          // Game is complete
-          onGameComplete(score + (isCorrect ? 1 : 0), scenarios.length);
-        }
-      }, 2000);
+      completeScenario();
     }
+  };
+
+  const completeScenario = () => {
+    setIsComplete(true);
+    setIsPlaying(false);
+    
+    // Calculate total correct matches for the current scenario
+    const correctMatches = matches.filter(match => match.isCorrect).length;
+    
+    // Update total score across all scenarios
+    setTotalScore(prev => prev + correctMatches);
+    
+    // Add delay before moving to next scenario
+    setTimeout(() => {
+      if (currentScenarioIndex < scenarios.length - 1) {
+        setCurrentScenarioIndex(currentScenarioIndex + 1);
+      } else {
+        // Game is complete - pass the final score
+        onGameComplete(score, scenarios.length);
+      }
+    }, 2000);
   };
   
   const getFeatureById = (id: string | null): Feature | null => {
@@ -126,13 +140,17 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
     setIsPlaying(false);
     setIsComplete(true);
     
+    // Calculate current score for this scenario
+    const correctMatches = matches.filter(match => match.isCorrect).length;
+    setTotalScore(prev => prev + correctMatches);
+    
     // Move to next scenario after delay
     setTimeout(() => {
       if (currentScenarioIndex < scenarios.length - 1) {
         setCurrentScenarioIndex(currentScenarioIndex + 1);
       } else {
         // Game is complete
-        onGameComplete(score, scenarios.length);
+        onGameComplete(totalScore, scenarios.length);
       }
     }, 2000);
   };
@@ -140,8 +158,8 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
   if (!currentScenario) return null;
   
   return (
-    <div className="bg-white rounded-lg shadow-xl p-6 max-w-6xl mx-auto">
-      <div className="mb-6">
+    <div className="bg-white rounded-lg shadow-xl p-3 sm:p-6 max-w-6xl mx-auto">
+      <div className="mb-4 sm:mb-6">
         <GameTimer 
           duration={60} 
           onTimeUp={handleTimeUp} 
@@ -149,34 +167,34 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
         />
       </div>
       
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-primary mb-2">
+      <div className="text-center mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-primary mb-1 sm:mb-2">
           Scenario: {currentScenario.title}
         </h2>
-        <p className="text-gray-600">{currentScenario.description}</p>
+        <p className="text-sm sm:text-base text-gray-600">{currentScenario.description}</p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className={`grid grid-cols-1 ${isMobile ? 'space-y-6' : 'md:grid-cols-3 gap-4 sm:gap-8'}`}>
         {/* Left panel - Service providers */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h3 className="font-bold text-primary mb-4 text-center">Service Providers</h3>
-          <div className="space-y-3">
+        <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+          <h3 className="font-bold text-primary mb-3 sm:mb-4 text-center">Service Providers</h3>
+          <div className="space-y-2 sm:space-y-3">
             {currentScenario.providers.map(provider => (
               <div 
                 key={provider.id}
-                className="bg-primary-light text-white p-3 rounded-lg shadow flex items-center"
+                className="bg-primary-light text-white p-2 sm:p-3 rounded-lg shadow flex items-center"
               >
-                <span className="text-2xl mr-3">{provider.icon}</span>
-                <span className="font-medium">{provider.name}</span>
+                <span className="text-xl sm:text-2xl mr-2 sm:mr-3">{provider.icon}</span>
+                <span className="font-medium text-sm sm:text-base">{provider.name}</span>
               </div>
             ))}
           </div>
         </div>
         
         {/* Center panel - Draggable features */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h3 className="font-bold text-primary mb-4 text-center">Dazzify Features</h3>
-          <div className="space-y-3">
+        <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+          <h3 className="font-bold text-primary mb-3 sm:mb-4 text-center">Dazzify Features</h3>
+          <div className="space-y-2 sm:space-y-3">
             {availableFeatures.map(feature => {
               // Check if this feature is already matched
               const isMatched = matches.some(match => match.featureId === feature.id);
@@ -197,8 +215,8 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
         </div>
         
         {/* Right panel - Drop zones */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h3 className="font-bold text-primary mb-4 text-center">Match the Best Feature</h3>
+        <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+          <h3 className="font-bold text-primary mb-3 sm:mb-4 text-center">Match the Best Feature</h3>
           {currentScenario.providers.map(provider => {
             const match = matches.find(m => m.providerId === provider.id);
             
@@ -217,7 +235,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
         </div>
       </div>
       
-      <div className="mt-6 flex justify-between">
+      <div className="mt-4 sm:mt-6 flex justify-between text-sm sm:text-base">
         <div className="text-gray-600">
           Scenario {currentScenarioIndex + 1} of {scenarios.length}
         </div>

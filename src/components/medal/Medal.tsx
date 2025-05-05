@@ -14,19 +14,19 @@ const Medal: React.FC<MedalProps> = ({ type, className = '', animate = false }) 
   
   const medals = {
     'dazzify-star': {
-      container: `${baseClasses} bg-gradient-to-r from-yellow-300 to-yellow-500 border-4 border-yellow-600`,
+      container: `${baseClasses} bg-gradient-to-r from-secondary to-secondary-light border-4 border-secondary-dark`,
       icon: '🌟',
       name: 'Dazzify Star User Medal',
       description: "Perfect matching skills! You're a Dazzify pro!"
     },
     'smart-planner': {
-      container: `${baseClasses} bg-gradient-to-r from-blue-300 to-purple-500 border-4 border-blue-600`,
+      container: `${baseClasses} bg-gradient-to-r from-primary-light to-primary border-4 border-primary-dark`,
       icon: '🧠',
       name: 'Smart Planner Medal',
       description: 'Great work! You have excellent planning instincts.'
     },
     'first-booking': {
-      container: `${baseClasses} bg-gradient-to-r from-green-300 to-teal-500 border-4 border-green-600`,
+      container: `${baseClasses} bg-gradient-to-r from-secondary-light to-secondary border-4 border-secondary-dark`,
       icon: '🎯',
       name: 'First Booking Medal',
       description: 'Good start! Keep practicing to improve your matches.'
