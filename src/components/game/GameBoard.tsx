@@ -81,15 +81,6 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
     // Update matches
     setMatches(matches.map(match => {
       if (match.providerId === providerId) {
-        // If replacing an existing match, adjust the score
-        if (match.featureId !== null && match.isCorrect === true) {
-          // Replacing a correct match with a new one
-          setScore(prevScore => isCorrect ? prevScore : prevScore - 1);
-        } else if (isCorrect) {
-          // Adding a new correct match
-          setScore(prevScore => prevScore + 1);
-        }
-        
         return {
           ...match,
           featureId,
@@ -114,11 +105,13 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
     setIsComplete(true);
     setIsPlaying(false);
     
-    // Calculate total correct matches for the current scenario
-    const correctMatches = matches.filter(match => match.isCorrect).length;
+    // Calculate if all matches in the current scenario are correct
+    const allCorrect = matches.every(match => match.isCorrect);
     
-    // Update total score across all scenarios
-    setTotalScore(prev => prev + correctMatches);
+    // Only add to score if all matches are correct
+    if (allCorrect) {
+      setTotalScore(prev => prev + 1);
+    }
     
     // Add delay before moving to next scenario
     setTimeout(() => {
@@ -126,7 +119,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
         setCurrentScenarioIndex(currentScenarioIndex + 1);
       } else {
         // Game is complete - pass the final score
-        onGameComplete(score, scenarios.length);
+        onGameComplete(totalScore, scenarios.length);
       }
     }, 2000);
   };
@@ -140,9 +133,13 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
     setIsPlaying(false);
     setIsComplete(true);
     
-    // Calculate current score for this scenario
-    const correctMatches = matches.filter(match => match.isCorrect).length;
-    setTotalScore(prev => prev + correctMatches);
+    // Calculate if all matches in the current scenario are correct
+    const allCorrect = matches.every(match => match.isCorrect);
+    
+    // Only add to score if all matches are correct
+    if (allCorrect) {
+      setTotalScore(prev => prev + 1);
+    }
     
     // Move to next scenario after delay
     setTimeout(() => {
@@ -240,7 +237,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
           Scenario {currentScenarioIndex + 1} of {scenarios.length}
         </div>
         <div className="font-bold text-primary">
-          Score: {score}
+          Score: {totalScore}
         </div>
       </div>
     </div>
