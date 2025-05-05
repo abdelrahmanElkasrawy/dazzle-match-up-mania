@@ -5,6 +5,8 @@ import DropZone from './DropZone';
 import GameTimer from '../timer/GameTimer';
 import { scenarios, features, getMedalForScore, Feature, Provider } from '../../data/gameData';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Clock } from 'lucide-react';
 
 interface GameBoardProps {
   onGameComplete: (score: number, total: number) => void;
@@ -24,6 +26,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
   const [matches, setMatches] = useState<Match[]>([]);
   const [availableFeatures, setAvailableFeatures] = useState<Feature[]>([]);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [showTimeUpDialog, setShowTimeUpDialog] = useState(false);
   const isMobile = useIsMobile();
   
   const currentScenario = scenarios[currentScenarioIndex];
@@ -131,7 +134,11 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
   
   const handleTimeUp = () => {
     setIsPlaying(false);
-    setIsComplete(true);
+    setShowTimeUpDialog(true);
+  };
+  
+  const handleTimeUpContinue = () => {
+    setShowTimeUpDialog(false);
     
     // Calculate if all matches in the current scenario are correct
     const allCorrect = matches.every(match => match.isCorrect);
@@ -141,15 +148,13 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
       setTotalScore(prev => prev + 1);
     }
     
-    // Move to next scenario after delay
-    setTimeout(() => {
-      if (currentScenarioIndex < scenarios.length - 1) {
-        setCurrentScenarioIndex(currentScenarioIndex + 1);
-      } else {
-        // Game is complete
-        onGameComplete(totalScore, scenarios.length);
-      }
-    }, 2000);
+    // Move to next scenario or end the game
+    if (currentScenarioIndex < scenarios.length - 1) {
+      setCurrentScenarioIndex(currentScenarioIndex + 1);
+    } else {
+      // Game is complete
+      onGameComplete(totalScore, scenarios.length);
+    }
   };
   
   if (!currentScenario) return null;
@@ -240,6 +245,29 @@ const GameBoard: React.FC<GameBoardProps> = ({ onGameComplete }) => {
           Score: {totalScore}
         </div>
       </div>
+
+      {/* Time Up Alert Dialog */}
+      <AlertDialog open={showTimeUpDialog} onOpenChange={setShowTimeUpDialog}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center text-red-500">
+              <Clock className="w-5 h-5 mr-2" />
+              Time's Up!
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Your time for this scenario has ended. Let's see how you did and move on to the next challenge!
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction 
+              onClick={handleTimeUpContinue} 
+              className="bg-primary hover:bg-primary-dark"
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

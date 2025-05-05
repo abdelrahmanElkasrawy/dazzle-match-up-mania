@@ -30,13 +30,15 @@ export interface Medal {
 export const providers: Provider[] = [
   { id: 'florist', name: 'Florist', icon: '🌸' },
   { id: 'caterer', name: 'Caterer', icon: '🍽️' },
-  { id: 'dj', name: 'DJ', icon: '🎧' },
   { id: 'photographer', name: 'Photographer', icon: '📸' },
   { id: 'venue', name: 'Venue', icon: '🏛️' },
   { id: 'planner', name: 'Wedding Planner', icon: '📋' },
   { id: 'decorator', name: 'Decorator', icon: '🎨' },
   { id: 'bakery', name: 'Bakery', icon: '🎂' },
   { id: 'transport', name: 'Transportation', icon: '🚗' },
+  { id: 'makeup', name: 'Makeup Artist', icon: '💄' },
+  { id: 'jewelry', name: 'Jeweler', icon: '💍' },
+  { id: 'stationery', name: 'Stationery Designer', icon: '✉️' },
 ];
 
 // Available Dazzify features
@@ -95,62 +97,74 @@ export const features: Feature[] = [
     description: 'Gain insights into your business performance',
     icon: '📊'
   },
+  { 
+    id: 'crm', 
+    name: 'Client Relationship Manager', 
+    description: 'Track client interactions and follow-ups',
+    icon: '👥'
+  },
+  { 
+    id: 'onlineBooking', 
+    name: 'Online Booking System', 
+    description: 'Let clients book appointments directly',
+    icon: '🗓️'
+  },
 ];
 
-// Game scenarios
+// Game scenarios - updated to be more realistic
 export const scenarios: Scenario[] = [
   {
-    id: 'wedding-desert',
-    title: 'Wedding in the Desert',
-    description: 'A couple wants a sunset desert wedding with romantic vibes.',
+    id: 'wedding-luxury',
+    title: 'Luxury Destination Wedding',
+    description: 'A couple is planning a lavish wedding at a luxury resort in Bali with 150 guests.',
     providers: [
-      providers.find(p => p.id === 'florist')!,
+      providers.find(p => p.id === 'planner')!,
       providers.find(p => p.id === 'photographer')!,
       providers.find(p => p.id === 'venue')!,
     ],
     features: [
       features.find(f => f.id === 'portfolio')!,
       features.find(f => f.id === 'calendar')!,
-      features.find(f => f.id === 'payments')!,
       features.find(f => f.id === 'messaging')!,
       features.find(f => f.id === 'reviews')!,
+      features.find(f => f.id === 'contracts')!,
     ],
     correctMatches: {
-      'florist': 'portfolio',
-      'photographer': 'calendar',
-      'venue': 'reviews',
+      'planner': 'messaging',
+      'photographer': 'portfolio',
+      'venue': 'calendar',
     }
   },
   {
-    id: 'corporate-launch',
-    title: 'Corporate Launch Party',
-    description: 'A tech startup wants to make a splash with their product launch event.',
+    id: 'corporate-product-launch',
+    title: 'Tech Product Launch Event',
+    description: 'A major tech company is unveiling their new flagship product with a high-profile event for 300 attendees.',
     providers: [
       providers.find(p => p.id === 'caterer')!,
-      providers.find(p => p.id === 'dj')!,
       providers.find(p => p.id === 'venue')!,
+      providers.find(p => p.id === 'decorator')!,
     ],
     features: [
       features.find(f => f.id === 'packages')!,
+      features.find(f => f.id === 'inventory')!,
       features.find(f => f.id === 'contracts')!,
+      features.find(f => f.id === 'analytics')!,
       features.find(f => f.id === 'portfolio')!,
-      features.find(f => f.id === 'messaging')!,
-      features.find(f => f.id === 'calendar')!,
     ],
     correctMatches: {
-      'caterer': 'packages',
-      'dj': 'portfolio',
+      'caterer': 'inventory',
       'venue': 'contracts',
+      'decorator': 'portfolio',
     }
   },
   {
-    id: 'birthday-celebration',
-    title: 'Birthday Celebration',
-    description: 'A milestone birthday party with 100 guests and a themed evening.',
+    id: 'milestone-birthday',
+    title: '50th Birthday Celebration',
+    description: 'A surprise 50th birthday party at an upscale restaurant with custom decor and catering for 75 guests.',
     providers: [
       providers.find(p => p.id === 'bakery')!,
       providers.find(p => p.id === 'decorator')!,
-      providers.find(p => p.id === 'dj')!,
+      providers.find(p => p.id === 'caterer')!,
     ],
     features: [
       features.find(f => f.id === 'portfolio')!,
@@ -161,105 +175,105 @@ export const scenarios: Scenario[] = [
     ],
     correctMatches: {
       'bakery': 'portfolio',
-      'decorator': 'inventory',
-      'dj': 'packages',
-    }
-  },
-  {
-    id: 'outdoor-festival',
-    title: 'Outdoor Music Festival',
-    description: 'A weekend music festival with multiple stages and food vendors.',
-    providers: [
-      providers.find(p => p.id === 'caterer')!,
-      providers.find(p => p.id === 'transport')!,
-      providers.find(p => p.id === 'venue')!,
-    ],
-    features: [
-      features.find(f => f.id === 'inventory')!,
-      features.find(f => f.id === 'calendar')!,
-      features.find(f => f.id === 'analytics')!,
-      features.find(f => f.id === 'contracts')!,
-      features.find(f => f.id === 'payments')!,
-    ],
-    correctMatches: {
+      'decorator': 'packages',
       'caterer': 'inventory',
-      'transport': 'calendar',
-      'venue': 'contracts',
-    }
-  },
-  {
-    id: 'elegant-wedding',
-    title: 'Elegant Ballroom Wedding',
-    description: 'A sophisticated wedding in a historic ballroom with 200 guests.',
-    providers: [
-      providers.find(p => p.id === 'planner')!,
-      providers.find(p => p.id === 'florist')!,
-      providers.find(p => p.id === 'caterer')!,
-    ],
-    features: [
-      features.find(f => f.id === 'messaging')!,
-      features.find(f => f.id === 'packages')!,
-      features.find(f => f.id === 'reviews')!,
-      features.find(f => f.id === 'portfolio')!,
-      features.find(f => f.id === 'analytics')!,
-    ],
-    correctMatches: {
-      'planner': 'messaging',
-      'florist': 'portfolio',
-      'caterer': 'reviews',
     }
   },
   {
     id: 'charity-gala',
-    title: 'Charity Fundraising Gala',
-    description: 'An upscale evening event raising money for a local charity.',
+    title: 'Annual Charity Fundraiser',
+    description: 'A black-tie charity gala aiming to raise $500,000 for a local children\'s hospital with 400 attendees.',
     providers: [
       providers.find(p => p.id === 'venue')!,
       providers.find(p => p.id === 'caterer')!,
       providers.find(p => p.id === 'planner')!,
     ],
     features: [
-      features.find(f => f.id === 'contracts')!,
       features.find(f => f.id === 'analytics')!,
-      features.find(f => f.id === 'packages')!,
-      features.find(f => f.id === 'payments')!,
-      features.find(f => f.id === 'portfolio')!,
+      features.find(f => f.id === 'messaging')!,
+      features.find(f => f.id === 'contracts')!,
+      features.find(f => f.id === 'reviews')!,
+      features.find(f => f.id === 'crm')!,
     ],
     correctMatches: {
       'venue': 'contracts',
-      'caterer': 'packages',
-      'planner': 'analytics',
+      'caterer': 'analytics',
+      'planner': 'crm',
     }
   },
   {
-    id: 'destination-wedding',
-    title: 'Destination Beach Wedding',
-    description: 'An intimate beachfront wedding with a small group of family and friends.',
+    id: 'intimate-wedding',
+    title: 'Intimate Garden Wedding',
+    description: 'A couple is planning a romantic garden wedding with only 30 close family members and friends.',
     providers: [
+      providers.find(p => p.id === 'florist')!,
       providers.find(p => p.id === 'photographer')!,
-      providers.find(p => p.id === 'planner')!,
+      providers.find(p => p.id === 'makeup')!,
+    ],
+    features: [
+      features.find(f => f.id === 'portfolio')!,
+      features.find(f => f.id === 'onlineBooking')!,
+      features.find(f => f.id === 'payments')!,
+      features.find(f => f.id === 'messaging')!,
+      features.find(f => f.id === 'reviews')!,
+    ],
+    correctMatches: {
+      'florist': 'portfolio',
+      'photographer': 'onlineBooking',
+      'makeup': 'reviews',
+    }
+  },
+  {
+    id: 'corporate-retreat',
+    title: 'Corporate Team Retreat',
+    description: 'A tech startup is planning a 3-day team-building retreat with activities and workshops for 50 employees.',
+    providers: [
       providers.find(p => p.id === 'venue')!,
+      providers.find(p => p.id === 'caterer')!,
+      providers.find(p => p.id === 'transport')!,
+    ],
+    features: [
+      features.find(f => f.id === 'packages')!,
+      features.find(f => f.id === 'calendar')!,
+      features.find(f => f.id === 'contracts')!,
+      features.find(f => f.id === 'analytics')!,
+      features.find(f => f.id === 'messaging')!,
+    ],
+    correctMatches: {
+      'venue': 'packages',
+      'caterer': 'calendar',
+      'transport': 'contracts',
+    }
+  },
+  {
+    id: 'wedding-traditional',
+    title: 'Traditional Cultural Wedding',
+    description: 'A couple is planning a large traditional wedding that honors their cultural heritage with 250 guests.',
+    providers: [
+      providers.find(p => p.id === 'stationery')!,
+      providers.find(p => p.id === 'jewelry')!,
+      providers.find(p => p.id === 'decorator')!,
     ],
     features: [
       features.find(f => f.id === 'portfolio')!,
       features.find(f => f.id === 'calendar')!,
-      features.find(f => f.id === 'messaging')!,
       features.find(f => f.id === 'payments')!,
-      features.find(f => f.id === 'reviews')!,
+      features.find(f => f.id === 'crm')!,
+      features.find(f => f.id === 'packages')!,
     ],
     correctMatches: {
-      'photographer': 'portfolio',
-      'planner': 'messaging',
-      'venue': 'reviews',
+      'stationery': 'crm',
+      'jewelry': 'portfolio',
+      'decorator': 'packages',
     }
   },
 ];
 
 // Medal thresholds
 export const medals: Medal[] = [
-  { type: 'dazzify-star', threshold: 7 }, // Perfect score
-  { type: 'smart-planner', threshold: 5 }, // 5-6 correct
-  { type: 'first-booking', threshold: 0 }, // 4 or fewer correct
+  { type: 'dazzify-star', threshold: 6 }, // 6-7 correct
+  { type: 'smart-planner', threshold: 3 }, // 3-5 correct
+  { type: 'first-booking', threshold: 0 }, // 0-2 correct
 ];
 
 // Get medal based on score
