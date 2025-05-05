@@ -17,7 +17,7 @@ const Medal: React.FC<MedalProps> = ({ type, className = '', animate = false }) 
       container: `${baseClasses} bg-gradient-to-r from-yellow-300 to-yellow-500 border-4 border-yellow-600`,
       icon: '🌟',
       name: 'Dazzify Star User Medal',
-      description: 'Perfect matching skills! You're a Dazzify pro!'
+      description: "Perfect matching skills! You're a Dazzify pro!"
     },
     'smart-planner': {
       container: `${baseClasses} bg-gradient-to-r from-blue-300 to-purple-500 border-4 border-blue-600`,
